@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Tic Tac Toe</title>
+  <style>
+    #board {
+      display: grid;
+      grid-template-columns: repeat(3, 100px);
+      gap: 2px;
+      width: 306px;
+      margin: 0 auto;
+      font-size: 24px;
+    }
+
+    .cell {
+      width: 100px;
+      height: 50px;
+      font-size: 24px;
+      text-align: center;
+      vertical-align: middle;
+      cursor: pointer;
+      background-color: rgb(82, 83, 82);
+      border: 1px solid rgb(9, 221, 254);
+      margin: 5px;
+      padding-top: 30px;
+    }
+    .bg{
+  background-color: #282c34;
+  color: #61dafb;
+  font-size: medium;
+}
+  </style>
+</head>
+<body class="bg">
+  <h1 style="text-align: center;">Tic Tac Toe</h1>
+  <div id="board"></div>
+  <script>
+    const board = document.getElementById('board');
+    const cells = [];
+    let currentPlayer = 'X';
+    let gameOver = false;
+
+    // Create the game board
+    for (let i = 0; i < 9; i++) {
+      const cell = document.createElement('div');
+      cell.className = 'cell';
+      cell.dataset.index = i;
+      board.appendChild(cell);
+      cells.push(cell);
+
+      cell.addEventListener('click', () => {
+        if (!gameOver && !cell.textContent) {
+          cell.textContent = currentPlayer;
+          checkWin();
+          switchPlayer();
+          if (!gameOver) {
+            computerMove();
+          }
+        }
+      });
+    }
+
+    // Check for a win or draw
+    function checkWin() {
+      const winningCombos = [
+        [0, 1, 2],
+        [3, 4, 5],
+        [6, 7, 8],
+        [0, 3, 6],
+        [1, 4, 7],
+        [2, 5, 8],
+        [0, 4, 8],
+        [2, 4, 6],
+      ];
+
+      for (const combo of winningCombos) {
+        const [a, b, c] = combo;
+        if (cells[a].textContent && cells[a].textContent === cells[b].textContent && cells[a].textContent === cells[c].textContent) {
+          gameOver = true;
+          cells[a].style.color = 'green';
+          cells[b].style.color = 'green';
+          cells[c].style.color = 'green';
+          setTimeout(() => {
+            alert(`${currentPlayer} Loose!`);
+          }, 100);
+          return;
+        }
+      }
+
+      if (!cells.some(cell => !cell.textContent)) {
+        gameOver = true;
+        setTimeout(() => {
+          alert("It's a draw!");
+        }, 100);
+      }
+    }
+
+    // Switch the current player
+    function switchPlayer() {
+      currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
+    }
+
+    // Computer's random move
+    function computerMove() {
+      const emptyCells = cells.filter(cell => !cell.textContent);
+      if (emptyCells.length > 0) {
+        const randomIndex = Math.floor(Math.random() * emptyCells.length);
+        const randomCell = emptyCells[randomIndex];
+        randomCell.textContent = currentPlayer;
+        checkWin();
+        switchPlayer();
+      }
+    }
+  </script>
+</body>
+</html>
+
